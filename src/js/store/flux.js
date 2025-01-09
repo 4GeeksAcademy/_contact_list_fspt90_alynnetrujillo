@@ -1,21 +1,25 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			contacts: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
+			createNewContact: () => {
+				fetch("https://playground.4geeks.com/contact/agendas/contacts",{
+					method: "POST",
+				})
+				.then((response) => response.json())
+				.then((data) => {
+					console.log(data);
+				})
+				.catch((error) => console.log(error));
+			},
+			deleteContact: (id) => {
+				fetch("https://playground.4geeks.com/contact/agendas/")
+			}
+
+
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
