@@ -1,33 +1,75 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			contacts: []
+			contact: {
+				name: "",
+				address: "",
+				phone: "",
+				email: "",
+				
+			},
+			contacts: [],
+			deletecontact: {},
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			createNewContact: () => {
-				fetch("https://playground.4geeks.com/contact/agendas/contacts",{
-					method: "POST",
-				})
-				.then((response) => response.json())
-				.then((data) => {
-					console.log(data);
-				})
-				.catch((error) => console.log(error));
+			contactInfo: () => {
+				const options = {method: 'GET', headers: {'User-Agent': 'insomnia/10.3.0'}};
+
+				fetch('https://playground.4geeks.com/contact/agendas/contact-info/contacts', options)
+  				.then(response => response.json())
+ 				.then(response => console.log(response))
+  				.catch(err => console.error(err));
 			},
-			deleteContact: (id) => {
-				fetch("https://playground.4geeks.com/contact/agendas/")
-			}
 
 
+			addContactToList: () => {
+				const options = {method: 'POST'};
+
+				fetch('https://playground.4geeks.com/contact/agendas/contact-users/contacts', options)
+  				.then(response => response.json())
+  				.then(response => console.log(response))
+  				.catch(err => console.error(err));
+			},
+
+			createContact: () => {
+				const options = {method: 'POST'};
+
+				fetch('https://playground.4geeks.com/contact/agendas/create-new/contacts', options)
+  				.then(response => response.json())
+ 				.then(response => console.log(response))
+  				.catch(err => console.error(err));
+			},
+
+			editContact: () => {
+				const options = {method: 'PUT', };
+
+				fetch('https://playground.4geeks.com/contact/agendas/edit-contact/contacts/1', options)
+  				.then(response => response.json())
+  				.then(response => console.log(response))
+  				.catch(err => console.error(err));
+			},
+
+			delete_Contact: () => {
+				const options = {method: 'DELETE'};
+
+				fetch('https://playground.4geeks.com/contact/agendas/delete-contact/contacts/delete', options)
+  				.then(response => response.json())
+  				.then(response => console.log(response))
+  				.catch(err => console.error(err));
+			},
+
+			/*
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
 			loadSomeData: () => {
 				/**
 					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
+				
+			}, 
+			*/
+
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();
