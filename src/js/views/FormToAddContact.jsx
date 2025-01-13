@@ -1,54 +1,70 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const FormToAddContact = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-    const { id } = useParams(); 
+    const { id } = useParams();
 
-    const [contact, setContact] = useState({
+    const [info, setInfo] = useState({
         name: "",
         phone: "",
         email: "",
         address: "",
     });
-    
-    const handleChange = (e) => {
-        setContact({ 
-          ...contact, 
-          [e.target.name]: e.target.value 
-        }); 
-      };
 
-    const saveContact = (e) => {
+    const handleChange = (e) => {
+        setInfo({ ...info, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (Object.values(contact).some((value) => value.trim() === "")) {
-            alert("You Have Empty Fields");
-            return;
+        try {
+            const response = await fetch('https://playground.4geeks.com/contact/agendas/my_contacts/contacts', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(info),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to add contact: ${response.status} ${response.statusText}`);
+            }
+
+            const newContact = await response.json();
+            actions.showContacts(newContact);
+            navigate("/contacts");
+        } catch (error) {
+            console.error("Error adding contact:", error);
+            alert(`Failed to add contact. Please try again later. Error: ${error.message}`);
         }
+
         if (id) {
-            actions.editContact(id, contact);
+            actions.editContact(id, info);
         } else {
-            actions.addContact(contact);
+            actions.addContactToList(info);
         }
+
         alert("The information has been saved");
-        navigate("/contacts"); 
-        setContact({ name: "", phone: "", email: "", address: "" }); 
     };
 
     useEffect(() => {
         if (id && store.contacts.length > 0) {
-            const currentContact = store.contacts.find((contact) => contact.id == id);
-            if (currentContact) setContact(currentContact);
+            const contactToEdit = store.contacts.find(contact => contact.id === id);
+            if (contactToEdit) {
+                setInfo(contactToEdit);
+            }
         }
     }, [id, store.contacts]);
 
     return (
         <div className="container">
             <h1 className="text-center">Add New Contact</h1>
-            <form onSubmit={saveContact}>
+            <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="exampleInputName" className="form-label">Full Name</label>
                     <input
@@ -57,8 +73,8 @@ export const FormToAddContact = () => {
                         className="form-control"
                         placeholder="Full Name"
                         id="exampleInputName"
-                        value={contact.name}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange(e)}
+                        value={info.name}
                     />
                 </div>
                 <div className="mb-3">
@@ -69,8 +85,8 @@ export const FormToAddContact = () => {
                         className="form-control"
                         placeholder="Email address"
                         id="exampleInputEmail1"
-                        value={contact.email}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange(e)}
+                        value={info.email}
                     />
                 </div>
                 <div className="mb-3">
@@ -81,8 +97,8 @@ export const FormToAddContact = () => {
                         className="form-control"
                         placeholder="Address"
                         id="exampleInputAddress"
-                        value={contact.address}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange(e)}
+                        value={info.address}
                     />
                 </div>
                 <div className="mb-3">
@@ -93,8 +109,8 @@ export const FormToAddContact = () => {
                         className="form-control"
                         placeholder="Phone Number"
                         id="exampleInputPhoneNum"
-                        value={contact.phone}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange(e)}
+                        value={info.phone}
                     />
                 </div>
                 <div className="mb-12">

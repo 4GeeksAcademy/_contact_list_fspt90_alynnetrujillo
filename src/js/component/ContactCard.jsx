@@ -9,6 +9,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 export const ContactCard = (props) => {
     const { store, actions } = useContext(Context)
 
+    
     return (
         <div className="card">
             <div className="col-md-7">

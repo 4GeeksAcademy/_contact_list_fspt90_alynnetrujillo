@@ -1,90 +1,93 @@
-const getState = ({ getStore, getActions, setStore }) => {
+const getState = ({ getStore, setStore }) => {
 	return {
 		store: {
+			contacts: [],
 			contact: {
-				name: "",
-				address: "",
+				full_name: "",
 				phone: "",
 				email: "",
-				
+				address: "",
 			},
-			contacts: [],
-			deletecontact: {},
+
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			contactInfo: () => {
-				const options = {method: 'GET', headers: {'User-Agent': 'insomnia/10.3.0'}};
-
-				fetch('https://playground.4geeks.com/contact/agendas/contact-info/contacts', options)
-  				.then(response => response.json())
- 				.then(response => console.log(response))
-  				.catch(err => console.error(err));
-			},
-
-
-			addContactToList: () => {
-				const options = {method: 'POST'};
-
-				fetch('https://playground.4geeks.com/contact/agendas/contact-users/contacts', options)
-  				.then(response => response.json())
-  				.then(response => console.log(response))
-  				.catch(err => console.error(err));
-			},
-
-			createContact: () => {
-				const options = {method: 'POST'};
-
-				fetch('https://playground.4geeks.com/contact/agendas/create-new/contacts', options)
-  				.then(response => response.json())
- 				.then(response => console.log(response))
-  				.catch(err => console.error(err));
-			},
-
-			editContact: () => {
-				const options = {method: 'PUT', };
-
-				fetch('https://playground.4geeks.com/contact/agendas/edit-contact/contacts/1', options)
-  				.then(response => response.json())
-  				.then(response => console.log(response))
-  				.catch(err => console.error(err));
-			},
-
-			delete_Contact: () => {
-				const options = {method: 'DELETE'};
-
-				fetch('https://playground.4geeks.com/contact/agendas/delete-contact/contacts/delete', options)
-  				.then(response => response.json())
-  				.then(response => console.log(response))
-  				.catch(err => console.error(err));
-			},
-
+			
 			/*
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				
-			}, 
+						showContacts: async () => {
+							try {
+								const response = await fetch('https://playground.4geeks.com/apis/fake/contact/agenda/my_agenda');
+								if (!response.ok) throw new Error("Failed to load contacts");
+								const data = await response.json();
+								setStore({ contacts: data });
+							} catch (error) {
+								console.error("Error loading contacts:", error);
+							}
+						}, 
+						this one would be GET
 			*/
 
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
+			// Add a new contact
+			addContactToList: async (contact) => {
+				try {
+					const store = getStore();
+					setStore({ contacts: [...store.contacts, newContact] });
+					const response = await fetch('https://playground.4geeks.com/contact/agendas/my_contacts/contacts', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							...contact,
+						}),
+					});
+					if (!response.ok) throw new Error(`Failed to add contact: ${response.status} {response.statusText}`);
+					const newContact = await response.json();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+					// Update the global store
+					
+				} catch (error) {
+					console.error("Error adding contact:", error);
+				}
+			},
 
-				//reset the global store
-				setStore({ demo: demo });
-			}
-		}
+			// Edit an existing contact
+			editContact: async (id, updatedContact) => {
+				try {
+					const store = getStore();
+					const updatedContacts = store.contacts.map((contact) =>
+						contact.id === id ? updated : contact
+					);
+					setStore({ contacts: updatedContacts });
+					const response = await fetch(`https://playground.4geeks.com/contact/agendas/my_contacts/contacts/${id}`, {
+						method: 'PUT',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(updatedContact),
+					});
+					if (!response.ok) throw new Error(`Failed to edit contact: ${response.status} {response.statusText}`);
+					const updated = await response.json();
+
+					// Update the global store
+				} catch (error) {
+					console.error("Error editing contact:", error);
+				}
+			},
+
+			// Delete a contact
+			deleteContact: async (id) => {
+				try {
+					const response = await fetch(`https://playground.4geeks.com/contact/agendas/my_contacts/contacts/${id}`, {
+						method: 'DELETE',
+					});
+					if (!response.ok) throw new Error("Failed to delete contact");
+
+					// Remove the contact from the global store
+					const store = getStore();
+					const updatedContacts = store.contacts.filter((contact) => contact.id !== id);
+					setStore({ contacts: updatedContacts });
+				} catch (error) {
+					console.error("Error deleting contact:", error);
+				}
+			},
+		},
+
 	};
 };
 
