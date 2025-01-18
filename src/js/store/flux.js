@@ -1,94 +1,98 @@
-const getState = ({ getStore, setStore }) => {
+const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			contacts: [],
-			contact: {
-				full_name: "",
-				phone: "",
-				email: "",
-				address: "",
-			},
-
 		},
 		actions: {
-			
-			/*
-						showContacts: async () => {
-							try {
-								const response = await fetch('https://playground.4geeks.com/apis/fake/contact/agenda/my_agenda');
-								if (!response.ok) throw new Error("Failed to load contacts");
-								const data = await response.json();
-								setStore({ contacts: data });
-							} catch (error) {
-								console.error("Error loading contacts:", error);
-							}
-						}, 
-						this one would be GET
-			*/
+			showContacts: async () => {
+				try {
+					const response = await fetch('https://playground.4geeks.com/contact/agendas/alynne_t/contacts', {
+						headers: { 'Content-Type': 'application/json' },
+					});
 
-			// Add a new contact
+					if (!response.ok) {
+						throw new Error(`Failed to load contacts: ${response}`);
+					}
+					const data = await response.json();
+					setStore({ contacts: data.contacts });
+				} catch (error) {
+					console.error("Error loading contacts:", error);
+				}
+			},
 			addContactToList: async (contact) => {
 				try {
 					const store = getStore();
-					setStore({ contacts: [...store.contacts, newContact] });
-					const response = await fetch('https://playground.4geeks.com/contact/agendas/my_contacts/contacts', {
+					const response = await fetch('https://playground.4geeks.com/contact/agendas/alynne_t/contacts', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							...contact,
-						}),
+						body: JSON.stringify(contact),
 					});
-					if (!response.ok) throw new Error(`Failed to add contact: ${response.status} {response.statusText}`);
-					const newContact = await response.json();
 
-					// Update the global store
-					
+					if (!response.ok) {
+						throw new Error(`Failed to add contact: ${response}`);
+					}
+					const newContact = await response.json();
+					console.log(newContact);
+					setStore({ contacts: [...store.contacts, newContact] });
+					getActions().showContacts()
 				} catch (error) {
 					console.error("Error adding contact:", error);
 				}
 			},
-
-			// Edit an existing contact
-			editContact: async (id, updatedContact) => {
+			editContact: async (updatedContact, id) => {
 				try {
 					const store = getStore();
-					const updatedContacts = store.contacts.map((contact) =>
-						contact.id === id ? updated : contact
-					);
-					setStore({ contacts: updatedContacts });
-					const response = await fetch(`https://playground.4geeks.com/contact/agendas/my_contacts/contacts/${id}`, {
+
+					const response = await fetch(`https://playground.4geeks.com/contact/agendas/alynne_t/contacts/${id}`, {
 						method: 'PUT',
 						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify(updatedContact),
 					});
-					if (!response.ok) throw new Error(`Failed to edit contact: ${response.status} {response.statusText}`);
-					const updated = await response.json();
 
-					// Update the global store
+					if (!response.ok) {
+						throw new Error(`Failed to edit contact: ${response}`);
+					}
+
+					const updatedData = await response.json();
+					console.log(updatedData);
+
+					const updatedContacts = store.contacts.map((contact) =>
+						contact.id === id ? updatedData : contact
+					);
+					setStore({ contacts: updatedContacts });
 				} catch (error) {
-					console.error("Error editing contact:", error);
+
 				}
 			},
-
-			// Delete a contact
 			deleteContact: async (id) => {
 				try {
-					const response = await fetch(`https://playground.4geeks.com/contact/agendas/my_contacts/contacts/${id}`, {
+					const store = getStore();
+
+					const response = await fetch(`https://playground.4geeks.com/contact/agendas/alynne_t/contacts/${id}`, {
 						method: 'DELETE',
 					});
-					if (!response.ok) throw new Error("Failed to delete contact");
 
-					// Remove the contact from the global store
-					const store = getStore();
+					if (!response.ok) {
+						throw new Error(`Failed to delete contact: ${response}`);
+					}
+
 					const updatedContacts = store.contacts.filter((contact) => contact.id !== id);
 					setStore({ contacts: updatedContacts });
+					getActions().showContacts()
 				} catch (error) {
 					console.error("Error deleting contact:", error);
 				}
 			},
 		},
-
 	};
 };
 
 export default getState;
+
+
+// API and Fetching
+//Do I need line 5?
+//line 21-25
+// double awaits after async ex: line 28-40
+
+// Layout line 33. 

@@ -22,34 +22,14 @@ export const FormToAddContact = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await fetch('https://playground.4geeks.com/contact/agendas/my_contacts/contacts', {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(info),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to add contact: ${response.status} ${response.statusText}`);
-            }
-
-            const newContact = await response.json();
-            actions.showContacts(newContact);
-            navigate("/contacts");
-        } catch (error) {
-            console.error("Error adding contact:", error);
-            alert(`Failed to add contact. Please try again later. Error: ${error.message}`);
-        }
 
         if (id) {
             actions.editContact(id, info);
+            navigate("/")
         } else {
             actions.addContactToList(info);
+            navigate("/")
         }
-
-        alert("The information has been saved");
     };
 
     useEffect(() => {
@@ -78,6 +58,18 @@ export const FormToAddContact = () => {
                     />
                 </div>
                 <div className="mb-3">
+                    <label htmlFor="exampleInputPhoneNum" className="form-label">Phone Number</label>
+                    <input
+                        type="text"
+                        name="phone"
+                        className="form-control"
+                        placeholder="Phone Number"
+                        id="exampleInputPhoneNum"
+                        onChange={(e) => handleChange(e)}
+                        value={info.phone}
+                    />
+                </div>
+                <div className="mb-3">
                     <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
                     <input
                         type="text"
@@ -101,23 +93,11 @@ export const FormToAddContact = () => {
                         value={info.address}
                     />
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="exampleInputPhoneNum" className="form-label">Phone Number</label>
-                    <input
-                        type="text"
-                        name="phone"
-                        className="form-control"
-                        placeholder="Phone Number"
-                        id="exampleInputPhoneNum"
-                        onChange={(e) => handleChange(e)}
-                        value={info.phone}
-                    />
-                </div>
                 <div className="mb-12">
                     <button type="submit" className="btn btn-primary">Save</button>
                 </div>
             </form>
-            <Link to="/contacts">Or Go Back To Contacts</Link>
+            <Link to="/">Or Go Back To Contacts</Link>
         </div>
     );
 };

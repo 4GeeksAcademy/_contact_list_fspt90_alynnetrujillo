@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 
 
-import { Home } from "./views/home";
+import { Home } from "./views/home.js";
 import { FormToAddContact } from "./views/FormToAddContact.jsx";
 import { Contacts } from "./views/Contacts.jsx";
 import { EditContact } from "./views/EditContact.jsx";
