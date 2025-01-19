@@ -39,7 +39,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error adding contact:", error);
 				}
 			},
-			editContact: async (updatedContact, id) => {
+			editContact: async (id, updatedContact, navigate) => {
+				console.log(id);
 				try {
 					const store = getStore();
 
@@ -56,10 +57,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const updatedData = await response.json();
 					console.log(updatedData);
 
-					const updatedContacts = store.contacts.map((contact) =>
+					/* const updatedContacts = store.contacts.map((contact) =>
 						contact.id === id ? updatedData : contact
 					);
-					setStore({ contacts: updatedContacts });
+					setStore({ contacts: updatedContacts }); // maybe an error here. */
+					getActions().showContacts()
+					// setStore({ contacts: [...store.contacts, updatedContact ]}) // wouldn't work b/c it would add the obj to the end of the copied array???
+					navigate("/")
 				} catch (error) {
 
 				}
@@ -91,8 +95,7 @@ export default getState;
 
 
 // API and Fetching
-//Do I need line 5?
-//line 21-25
-// double awaits after async ex: line 28-40
+
+
 
 // Layout line 33. 

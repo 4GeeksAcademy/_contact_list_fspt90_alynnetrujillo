@@ -1,36 +1,42 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
-
 
 export const EditContact = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const { id } = useParams();
+    console.log(id);
 
-    const [contact, setContact] = useState(store.contacts);
+    const [contact, setContact] = useState({});
 
     const handleChange = (e) => {
         setContact({ ...contact, [e.target.name]: e.target.value });
     };
 
-    handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (id) {
-            actions.editContact(id, contact);
-            navigate("/")
+            actions.editContact(id, contact, navigate);
         } else {
             console.error("Error editing contact:", error);
         }
     }
-    
+    useEffect(() => {
+
+        
+        const contactToEdit = store.contacts.find(contact => contact.id === parseInt(id)) // useeffect to bring the contact to edit 
+        console.log(contactToEdit);
+        if (contactToEdit) {setContact(contactToEdit)}
+    },[]) 
+    // useEffect goes here. 
 
     return (
         <div className="container">
             <h1 className="text-center">Edit Contact Information</h1>
-            <form className="row g-3" >
+            <form className="row g-3" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label for="exampleInputName" className="form-label">Full Name</label>
                     <input
@@ -70,7 +76,7 @@ export const EditContact = () => {
                     <label for="exampleInputAddress" className="form-label">Address</label>
                     <input
                         type="text"
-                        name=""
+                        name="address"
                         className="form-control"
                         placeholder="Address"
                         id="exampleInputAddress"

@@ -14,9 +14,6 @@ export const ContactCard = ( {name,phone,email,address,id} ) => {
         actions.deleteContact(id);
     }
 
-    const editSpecificContact = () => {
-        actions.editContact({ name, phone, email, address }, id); 
-    };
     return (
         <div className="card">
             <div className="col-md-7">
@@ -32,7 +29,7 @@ export const ContactCard = ( {name,phone,email,address,id} ) => {
                         <i className="fa-solid fa-location-dot me-2"></i>{address}
                     </p>
                     <Link to={`/editcontact/${id}`}> 
-                        <button className="btn btn-danger" onClick={ () => editSpecificContact(id)}>
+                        <button className="btn btn-danger">
                             <FontAwesomeIcon icon={faPenToSquare} /> Edit
                         </button>
                     </Link>
